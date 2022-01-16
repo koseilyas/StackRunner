@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Platform : MonoBehaviour
@@ -6,17 +5,16 @@ public class Platform : MonoBehaviour
     private Vector3 _target;
     private bool _canMove = true;
     [SerializeField] private float speed;
-    [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private PlatformEntrance _platformEntrance;
+    [SerializeField] private Material[] _platformMaterials;
+    [SerializeField] private MeshRenderer _renderer;
     private int _moveDirection;
-    public float xPosition = 0;
-    public float positiveXEdgePosition = 1.5f;
-    public float negativeXEdgePosition = 1.5f;
 
     public void Init(Vector3 target)
     {
+        Material mat = _platformMaterials[Random.Range(0, _platformMaterials.Length-1)];
+        _renderer.sharedMaterial = mat;
         _platformEntrance.ResetEntrance();
-        _rigidbody.isKinematic = false;
         _canMove = true;
         _target = target;
         _target = new Vector3(0, target.y, target.z);
@@ -26,54 +24,62 @@ public class Platform : MonoBehaviour
             _moveDirection = -1;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if(!_canMove)
             return;
-        _rigidbody.velocity = Vector3.right * speed * _moveDirection;
+        transform.Translate(Vector3.right * speed * _moveDirection * Time.deltaTime);
     }
 
     public void StopMoving()
     {
-        _rigidbody.velocity = Vector3.zero;
-        _rigidbody.isKinematic = true;
         _canMove = false;
         _moveDirection = 0;
-        xPosition = transform.position.x;
-        positiveXEdgePosition = xPosition + transform.localScale.x / 2f;
-        negativeXEdgePosition = xPosition - transform.localScale.x / 2f;
     }
 
     public void Trim(Platform previousPlatform)
     {
-        float distance = Mathf.Abs(previousPlatform.xPosition - xPosition);
-        if (previousPlatform.xPosition > xPosition) // yeni solda
+        Transform transformPrevious = previousPlatform.transform;
+        float previousPlatformXPosition = transformPrevious.position.x;
+        float previousPlatformPositiveXEdgePosition = previousPlatformXPosition + (transformPrevious.localScale.x / 2);
+        float previousPlatformNegativeXEdgePosition = previousPlatformXPosition - (transformPrevious.localScale.x / 2);
+        
+        float platformXPosition = transform.position.x;
+        float platformPositiveXEdgePosition = platformXPosition + (transform.localScale.x / 2);
+        float platformNegativeXEdgePosition = platformXPosition - (transform.localScale.x / 2);
+        
+        float distance = Mathf.Abs(previousPlatformXPosition - platformXPosition);
+        if (distance < 0.2f)
         {
-            if (previousPlatform.negativeXEdgePosition < positiveXEdgePosition) // kesilebilir
+            Debug.Log($"perfect{gameObject.name}" );
+            transform.position = new Vector3(previousPlatformXPosition, transform.position.y, transform.position.z);
+            transform.localScale = transformPrevious.localScale;
+        }else if (previousPlatformNegativeXEdgePosition > platformNegativeXEdgePosition)
+        {
+            if (previousPlatformNegativeXEdgePosition < platformPositiveXEdgePosition)
             {
-                float newXScale = Mathf.Abs(positiveXEdgePosition - previousPlatform.negativeXEdgePosition);
-                float newXCenter = (positiveXEdgePosition + previousPlatform.negativeXEdgePosition) / 2f;
+                float newXScale = Mathf.Abs(platformPositiveXEdgePosition - previousPlatformNegativeXEdgePosition);
+                float newXCenter = (platformPositiveXEdgePosition + previousPlatformNegativeXEdgePosition) / 2f;
                 transform.localScale = new Vector3(newXScale, transform.localScale.y, transform.localScale.z);
                 transform.position = new Vector3(newXCenter, transform.position.y, transform.position.z);
-                
             }
             else
             {
-                transform.localScale = Vector3.zero;
+                Destroy(gameObject);
             }
         }
-        else // yeni sagda
+        else if (platformPositiveXEdgePosition > previousPlatformPositiveXEdgePosition)
         {
-            if (previousPlatform.positiveXEdgePosition > negativeXEdgePosition) // kesilebilir
+            if (previousPlatformPositiveXEdgePosition > platformNegativeXEdgePosition)
             {
-                float newXScale = Mathf.Abs(previousPlatform.positiveXEdgePosition - negativeXEdgePosition);
-                float newXCenter = (previousPlatform.positiveXEdgePosition + negativeXEdgePosition) / 2f;
+                float newXScale = Mathf.Abs(previousPlatformPositiveXEdgePosition - platformNegativeXEdgePosition);
+                float newXCenter = (previousPlatformPositiveXEdgePosition + platformNegativeXEdgePosition) / 2f;
                 transform.localScale = new Vector3(newXScale, transform.localScale.y, transform.localScale.z);
                 transform.position = new Vector3(newXCenter, transform.position.y, transform.position.z);
             }
             else
             {
-                transform.localScale = Vector3.zero;
+                Destroy(gameObject);
             }
         }
     }
