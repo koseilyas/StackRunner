@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Platform : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class Platform : MonoBehaviour
     [SerializeField] private Material[] _platformMaterials;
     [SerializeField] private MeshRenderer _renderer;
     private int _moveDirection;
+    public static event Action<int> OnPerfectMatch;
+    private static int _streak;
 
     public void Init(Vector3 target)
     {
@@ -51,36 +55,36 @@ public class Platform : MonoBehaviour
         float distance = Mathf.Abs(previousPlatformXPosition - platformXPosition);
         if (distance < 0.2f)
         {
-            Debug.Log($"perfect{gameObject.name}" );
+            OnPerfectMatch?.Invoke(_streak);
+            _streak++;
+            Debug.Log($"perfect{gameObject.name} streak {_streak}" );
             transform.position = new Vector3(previousPlatformXPosition, transform.position.y, transform.position.z);
             transform.localScale = transformPrevious.localScale;
         }else if (previousPlatformNegativeXEdgePosition > platformNegativeXEdgePosition)
         {
+            _streak = 0;
             if (previousPlatformNegativeXEdgePosition < platformPositiveXEdgePosition)
             {
-                float newXScale = Mathf.Abs(platformPositiveXEdgePosition - previousPlatformNegativeXEdgePosition);
-                float newXCenter = (platformPositiveXEdgePosition + previousPlatformNegativeXEdgePosition) / 2f;
-                transform.localScale = new Vector3(newXScale, transform.localScale.y, transform.localScale.z);
-                transform.position = new Vector3(newXCenter, transform.position.y, transform.position.z);
+                CubeSlicer.Slice(transform, new Vector3(previousPlatformNegativeXEdgePosition, transform.position.y, transform.position.z), true);
             }
             else
             {
                 Destroy(gameObject);
             }
+            Debug.Log($"not streak 1" );
         }
         else if (platformPositiveXEdgePosition > previousPlatformPositiveXEdgePosition)
         {
+            _streak = 0;
             if (previousPlatformPositiveXEdgePosition > platformNegativeXEdgePosition)
             {
-                float newXScale = Mathf.Abs(previousPlatformPositiveXEdgePosition - platformNegativeXEdgePosition);
-                float newXCenter = (previousPlatformPositiveXEdgePosition + platformNegativeXEdgePosition) / 2f;
-                transform.localScale = new Vector3(newXScale, transform.localScale.y, transform.localScale.z);
-                transform.position = new Vector3(newXCenter, transform.position.y, transform.position.z);
+                CubeSlicer.Slice(transform, new Vector3(previousPlatformPositiveXEdgePosition, transform.position.y, transform.position.z), false);
             }
             else
             {
                 Destroy(gameObject);
             }
+            Debug.Log($"not streak 2" );
         }
     }
 }

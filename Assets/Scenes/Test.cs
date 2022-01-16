@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    [SerializeField] private Transform platform;
+    [SerializeField] private AudioSource _audioSource;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            CubeCut.Cut(platform, Vector3.left,true);
+            _audioSource.Play();
         }
-        
     }
 }
