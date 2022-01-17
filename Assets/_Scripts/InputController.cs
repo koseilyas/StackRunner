@@ -4,7 +4,7 @@ using UnityEngine;
 public class InputController : MonoBehaviour
 {
     public static event Action OnTapped;
-    private bool _canTakeInput = true;
+    public static bool canTakeInput = true;
 
     private void OnEnable()
     {
@@ -14,7 +14,7 @@ public class InputController : MonoBehaviour
 
     private void StopInput()
     {
-        _canTakeInput = false;
+        canTakeInput = false;
     }
 
     private void OnDisable()
@@ -25,11 +25,12 @@ public class InputController : MonoBehaviour
 
     private void Update()
     {
-        if(!_canTakeInput)
+        if(!canTakeInput)
             return;
         if (Input.GetMouseButtonDown(0))
         {
             OnTapped?.Invoke();
+            canTakeInput = false;
         }
     }
 }

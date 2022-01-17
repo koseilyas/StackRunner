@@ -28,6 +28,7 @@ public class PlatformController : MonoBehaviour
     
     private void CreateNextPlatform(Platform oldPlatform)
     {
+        
         _platformCounter++;
         Platform newPlatform = Instantiate(_createdPlatforms[_createdPlatforms.Count-1], transform);
         newPlatform.name = $"platform{_platformCounter}";
@@ -39,6 +40,7 @@ public class PlatformController : MonoBehaviour
         }
         else
         {
+            InputController.canTakeInput = true;
             newPlatform.transform.localScale = new Vector3(_createdPlatforms[_createdPlatforms.Count - 1].transform.localScale.x, 0.5f, 4.5f);
             newPlatform.transform.position = _platformSpawnPoints[randomSpawnPointIndex] + new Vector3(0, 0, oldPlatform.transform.position.z + 4.5f);
             target = _platformSpawnPoints[(randomSpawnPointIndex+1)%2] + new Vector3(0, 0, oldPlatform.transform.position.z + 4.5f);
