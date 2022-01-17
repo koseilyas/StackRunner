@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// There is a lot of magic numbers in this class.
+/// We have 2 types of platform( normal platform and finishing platform) these numbers are their values.
+/// </summary>
 public class PlatformController : MonoBehaviour
 {
     private Vector3[] _platformSpawnPoints = new[] {new Vector3(6, -.25f, 0), new Vector3(-6, -.25f, 0)};

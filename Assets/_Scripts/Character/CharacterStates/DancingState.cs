@@ -6,9 +6,6 @@ public class DancingState : IState
     private readonly CharacterController _characterController;
     private readonly CharacterAnimationController _animationController;
     private readonly Rigidbody _rigidbody;
-    private float _dancingDuration = 5f;
-    private float _elapsedTime;
-    private bool _timerActive;
     public static event Action OnStartDancing;
 
     public DancingState(CharacterController characterController, CharacterAnimationController animationController, Rigidbody rigidbody)
@@ -22,7 +19,6 @@ public class DancingState : IState
         _rigidbody.velocity = Vector3.zero;
         _animationController.Dance();
         OnStartDancing?.Invoke();
-        StartTimer();
     }
 
     public void UpdateState()
@@ -40,14 +36,4 @@ public class DancingState : IState
         //OnStartRunning?.Invoke();
     }
     
-    void StartTimer()
-    {
-        _timerActive = true;
-        _elapsedTime = 0;
-    }
-
-    void StopTimer()
-    {
-        _timerActive = false;
-    }
 }

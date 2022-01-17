@@ -1,4 +1,3 @@
-
 using System;
 using UnityEngine;
 
@@ -10,6 +9,7 @@ public class InputController : MonoBehaviour
     private void OnEnable()
     {
         DancingState.OnStartDancing += StopInput;
+        FallingState.OnPlayerFall += StopInput;
     }
 
     private void StopInput()
@@ -20,6 +20,7 @@ public class InputController : MonoBehaviour
     private void OnDisable()
     {
         DancingState.OnStartDancing -= StopInput;
+        FallingState.OnPlayerFall -= StopInput;
     }
 
     private void Update()

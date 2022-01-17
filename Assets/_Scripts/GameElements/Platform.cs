@@ -44,6 +44,10 @@ public class Platform : MonoBehaviour
         _moveDirection = 0;
     }
 
+    /// <summary>
+    /// This function is messy.
+    /// It calculates and trims new platform.
+    /// </summary>
     public void Trim(Platform previousPlatform)
     {
         Transform transformPrevious = previousPlatform.transform;
