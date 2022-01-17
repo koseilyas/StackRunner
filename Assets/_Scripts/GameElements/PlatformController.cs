@@ -8,6 +8,7 @@ public class PlatformController : MonoBehaviour
     private Vector3[] _platformSpawnPoints = new[] {new Vector3(6, -.25f, 0), new Vector3(-6, -.25f, 0)};
     [SerializeField]private List<Platform> _createdPlatforms = new List<Platform>();
     [SerializeField] private Platform _finishingPlatform;
+    [SerializeField] private int _maxPlatformCount;
     private int _platformCounter = 1;
 
     private void OnEnable()
@@ -29,7 +30,7 @@ public class PlatformController : MonoBehaviour
         newPlatform.name = $"platform{_platformCounter}";
         int randomSpawnPointIndex = Random.Range(0, 2);
         Vector3 target = Vector3.zero;
-        if (_createdPlatforms.Count % 4 == 0)
+        if (_createdPlatforms.Count % _maxPlatformCount == 0)
         {
             CreateFinishingPlatform(oldPlatform);
         }
@@ -47,7 +48,7 @@ public class PlatformController : MonoBehaviour
     {
         Platform newPlatform = Instantiate(_finishingPlatform, transform);
         newPlatform.name = $"finishingPlatform";
-        newPlatform.transform.localScale = new Vector3(_createdPlatforms[_createdPlatforms.Count - 1].transform.localScale.x, 0.5f, 9f);
+        newPlatform.transform.localScale = new Vector3(3, 0.5f, 9f);
         newPlatform.transform.position =  new Vector3(0, -0.25f, oldPlatform.transform.position.z + 6.75f);
         Vector3 target =  new Vector3(0, -0.25f, oldPlatform.transform.position.z + 6.75f);
         newPlatform.Init(target);
