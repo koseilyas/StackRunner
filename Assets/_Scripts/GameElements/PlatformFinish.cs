@@ -2,23 +2,18 @@
 using System;
 using UnityEngine;
 
-public class PlatformEntrance : MonoBehaviour
+public class PlatformFinish : MonoBehaviour
 {
-    public static event Action<Platform> OnPlayerEnteredPlatform;
+    public static event Action<Platform> OnPlayerEnteredFinishingPlatform;
     [SerializeField] private Platform _platform;
     [SerializeField] private Collider _collider;
-
-    public void Init()
-    {
-        _collider.enabled = true; 
-    }
-
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out CharacterController character))
         {
             _collider.enabled = false;
-            OnPlayerEnteredPlatform?.Invoke(_platform);
+            OnPlayerEnteredFinishingPlatform?.Invoke(_platform);
         }
     }
 }

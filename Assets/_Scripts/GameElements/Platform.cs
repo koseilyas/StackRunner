@@ -7,8 +7,9 @@ public class Platform : MonoBehaviour
     private Vector3 _target;
     private bool _canMove = true;
     [SerializeField] private float speed;
-    [SerializeField] private PlatformEntrance _platformEntrance;
+    [SerializeField] public PlatformEntrance platformEntrance;
     [SerializeField] private Material[] _platformMaterials;
+    [SerializeField] private Material _finishingMat;
     [SerializeField] private MeshRenderer _renderer;
     private int _moveDirection;
     public static event Action<int> OnPerfectMatch;
@@ -18,14 +19,16 @@ public class Platform : MonoBehaviour
     {
         Material mat = _platformMaterials[Random.Range(0, _platformMaterials.Length-1)];
         _renderer.sharedMaterial = mat;
-        _platformEntrance.ResetEntrance();
+        platformEntrance.Init();
         _canMove = true;
         _target = target;
         _target = new Vector3(0, target.y, target.z);
         if (target.x > 0)
             _moveDirection = 1;
-        else
+        else if(target.x < 0)
             _moveDirection = -1;
+        else
+            _renderer.sharedMaterial = _finishingMat;
     }
 
     private void Update()
@@ -59,7 +62,7 @@ public class Platform : MonoBehaviour
             _streak++;
             Debug.Log($"perfect{gameObject.name} streak {_streak}" );
             transform.position = new Vector3(previousPlatformXPosition, transform.position.y, transform.position.z);
-            transform.localScale = transformPrevious.localScale;
+            transform.localScale = new Vector3(transformPrevious.localScale.x, transform.localScale.y, transform.localScale.z);
         }else if (previousPlatformNegativeXEdgePosition > platformNegativeXEdgePosition)
         {
             _streak = 0;

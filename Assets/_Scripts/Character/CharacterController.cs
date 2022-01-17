@@ -20,4 +20,19 @@ public class CharacterController : StateMachineParent
     {
         ChangeState(runningState);
     }
+
+    private void OnEnable()
+    {
+        PlatformFinish.OnPlayerEnteredFinishingPlatform += PlayerFinish;
+    }
+
+    private void OnDisable()
+    {
+        PlatformFinish.OnPlayerEnteredFinishingPlatform += PlayerFinish;
+    }
+    
+    private void PlayerFinish(Platform obj)
+    {
+        ChangeState(dancingState);
+    }
 }
